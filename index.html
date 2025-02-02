@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des Clients</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <h1>Gestion des Clients</h1>
+  
+  <label for="username">Nom d'utilisateur :</label>
+  <input type="text" id="username" name="username">
+  <br>
+
+  <label for="password">Mot de passe :</label>
+  <input type="password" id="password" name="password">
+  <br>
+
+  <button id="loginBtn">Se connecter</button>
+  <br>
+
+  <h2>Ajouter un Client</h2>
+  
+  <label for="clientId">ID Client :</label>
+  <input type="text" id="clientId" name="clientId">
+  <br>
+
+  <label for="clientName">Nom Client :</label>
+  <input type="text" id="clientName" name="clientName">
+  <br>
+
+  <button id="addClientBtn" style="display: none;">Ajouter Client</button>
+
+  <script>
+    // Vérification du nom d'utilisateur et mot de passe
+    var users = {
+      "Luca": "363433",
+      "admin": "3965admin"
+    };
+
+    $("#loginBtn").click(function() {
+      var username = $("#username").val();
+      var password = $("#password").val();
+
+      if(users[username] && users[username] === password) {
+        alert("Connexion réussie !");
+        $("#loginBtn").hide(); // Cache le bouton de connexion
+        $("#clientId, #clientName, #addClientBtn").show(); // Affiche les champs pour ajouter un client
+      } else {
+        alert("Nom d'utilisateur ou mot de passe incorrect.");
+      }
+    });
+
+    // Fonction pour envoyer des données via POST à Google Apps Script
+    $("#addClientBtn").click(function() {
+      var clientId = $("#clientId").val();
+      var clientName = $("#clientName").val();
+
+      // Vérifie si les champs sont remplis
+      if(clientId === "" || clientName === "") {
+        alert("Veuillez remplir tous les champs.");
+        return;
+      }
+
+      // Création de l'objet client à envoyer
+      var clientData = {
+        id: clientId,
+        nom: clientName
+      };
+
+      // Envoi des données à Google Apps Script via une requête POST
+      $.ajax({
+        url: 'https://script.google.com/macros/s/AKfycbw6HydpZkEzfcqHFI7vqps2rOWO9G8zi3YRdMqZFaGF/dev', // Remplace TON_SCRIPT_ID par ton ID de script Apps Script
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(clientData),
+        success: function(response) {
+          alert("Client ajouté avec succès !");
+          $("#clientId").val('');
+          $("#clientName").val('');
+        },
+        error: function() {
+          alert("Erreur lors de l'ajout du client.");
+        }
+      });
+    });
+  </script>
+</body>
+</html>
